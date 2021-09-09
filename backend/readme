@@ -1,0 +1,23 @@
+to run server : nodemon server.js
+to run clinent : cd client \ npm start
+
+to run app : npm run app
+
+Frontend : React 
+Backend : javascript , Node , Express 
+Database : MongoDB
+
+Dependencies:
+Frontend
+axios
+
+Backend
+bcrypt
+cors
+crypto
+express
+jsonwebtoken
+mongoose
+multer
+
+
