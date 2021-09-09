@@ -2,15 +2,17 @@ import React , {useState } from 'react';
 import axios from 'axios';
 import {useHistory} from 'react-router-dom'
 
+
 const CreateProduct = () => {
 
     const [product ,setProduct] = useState({
-       
         name:'',
         price : '',
-        description:''
-        
+        description:''    
     })
+    const [nameError, setNameError] = useState({});
+    const [priceError, setPriceError] = useState({});
+    const [descriptionError, setDescriptionError] = useState({});
 
     const history =  useHistory()
 
@@ -21,21 +23,24 @@ const CreateProduct = () => {
 
     const createProduct = async e => {
         e.preventDefault()
+        const isValid = formValidation();
+
         try {
-            const token = localStorage.getItem('tokenStore')
-            if(token){
-                const { name , price , description } = product;
-              
-                const newProduct = {
-                    name , price , description
-                }
-             
-               await axios.post('/api/products', newProduct , {
-                    headers : {Authorization:token}
-                })
-
-              
-
+           
+            if(isValid){
+                const token = localStorage.getItem('tokenStore')
+                if(token){
+                    const { name , price , description } = product;
+                  
+                    const newProduct = {
+                        name , price , description
+                    }
+                 
+                   await axios.post('/api/products', newProduct , {
+                        headers : {Authorization:token}
+                    })
+            }
+           
                 return history.push('/')
               
             }
@@ -45,6 +50,34 @@ const CreateProduct = () => {
         }
     }
 
+
+    const formValidation = () => {
+        const nameError = {};
+        const priceError = {};
+        const descriptionError = {};
+    
+        let isValid = true;
+    
+        if (!product.name) {
+          nameError.nameIsShort = "Required";
+          isValid = false;
+        }
+        if (!product.price) {
+          priceError.priceIsInvalid = "Required";
+          isValid = false;
+        }
+        if (!product.description) {
+            descriptionError.descriptionIsInvalid = "Required";
+            isValid = false;
+          }
+       
+    
+        setNameError(nameError);
+        setPriceError(priceError);
+        setDescriptionError( descriptionError);
+    
+        return isValid;
+      };
 
 
     return (
@@ -57,20 +90,45 @@ const CreateProduct = () => {
                 <div className="row" >
                     <label htmlFor="name" >Name</label>
                     <input type="text" value={product.name} id="name" placeholder="Name"
-                    name = "name" required onChange = {onChangeInput} maxlength = "36"  />
+                    name = "name" onChange = {onChangeInput} maxlength = "36"  />
                 </div>
+
+                {Object.keys(nameError).map((key, i) => {
+              return (
+                <div key={i} style={{ color: "red" }}>
+                  {nameError[key]}
+                </div>
+              );
+            })}
 
                 <div className="row" >
                     <label htmlFor="price" >Price</label>
                     <input type="text" value={product.price} id="price" placeholder="Price"
-                    name = "price" required onChange = {onChangeInput}   />
+                    name = "price"  onChange = {onChangeInput}   />
                 </div>
+
+                
+            {Object.keys(priceError).map((key, i) => {
+              return (
+                <div key={i} style={{ color: "red" }}>
+                  {priceError[key]}
+                </div>
+              );
+            })}
 
                 <div className="row" >
                     <label htmlFor="description" >Description</label>
                     <textarea type="text" value={product.description} id="description" placeholder="Description"
-                    name = "description" required row="10" onChange={onChangeInput}/>
+                    name = "description" row="10" onChange={onChangeInput}/>
                 </div>
+
+                {Object.keys(descriptionError).map((key, i) => {
+              return (
+                <div key={i} style={{ color: "red" }}>
+                  {descriptionError[key]}
+                </div>
+              );
+            })}
 
               
 

@@ -9,6 +9,10 @@ const Login = ({setIslogin}) => {
         password : ''
     })
 
+    const [nameError, setNameError] = useState({});
+    const [emailError, setEmailError] = useState({});
+  const [passwordError, setPasswordError] = useState({});
+
     const [err, setErr] = useState('')
 
     const onChangeInput = (e) => {
@@ -20,16 +24,20 @@ const Login = ({setIslogin}) => {
 
     const registerSubmit =async (e) => {
         e.preventDefault()
+        const isValid = RegisterformValidation();
         try {
-            const res = await axios.post('/users/register', {
-                username : user.name , 
-                email : user.email ,
-                password : user.password
-
-            })
-
-            setUser({name :'' , email : '' , password: ''})
-            setErr(res.data.msg)
+            if(isValid){
+                const res = await axios.post('/users/register', {
+                    username : user.name , 
+                    email : user.email ,
+                    password : user.password
+    
+                })
+    
+                setUser({name :'' , email : '' , password: ''})
+                setErr(res.data.msg)
+            }
+           
             
             
         } catch (err) {
@@ -42,25 +50,27 @@ const Login = ({setIslogin}) => {
 
     const loginSubmit= async (e) => {
         e.preventDefault()
+        const isValid = LoginformValidation();
+      
         try {
-
-            const res = await axios.post('/users/login', {
+            if(isValid){
+                console.log('yes')
+                const res = await axios.post('/users/login', {
               
-                email : user.email ,
-                password : user.password
-
-            })
-         
-
-            setUser({ email : '' , password: ''})
-            localStorage.setItem('tokenStore' , res.data.token)
-            setErr(res.data.msg)
-            setIslogin(true)
+                    email : user.email ,
+                    password : user.password
+    
+                })
+                console.log(res)
+                setUser({ email : '' , password: ''})
+                localStorage.setItem('tokenStore' , res.data.token)
+                setErr(res.data.msg)
+                setIslogin(true)
+            }
             
         } catch (err) {
-            
             err.response.data.msg && setErr(err.response.data.msg)
-        }
+        }      
     }
 
     const [onLogin ,setOnLogin] = useState(false)
@@ -70,17 +80,92 @@ const Login = ({setIslogin}) => {
         opacity : onLogin ? 1: 0
     }
 
+    const LoginformValidation = () => {
+        
+        const emailError = {};
+        const passwordError = {};
+    
+        let isValid = true;
+
+        if (!user.email) {
+          emailError.emailIsShort = "Required";
+          isValid = false;
+        }
+        if (!user.email.includes("@")) {
+          emailError.emailIsInvalid = "Email should contain @";
+          isValid = false;
+        }
+        if (!user.password) {
+          passwordError.passwordIsShort = "Required";
+          isValid = false;
+        }
+    
+        
+        setEmailError(emailError);
+        setPasswordError(passwordError);
+    
+        return isValid;
+      };
+
+      const RegisterformValidation = () => {
+        
+        const nameError ={};
+        const emailError = {};
+        const passwordError = {};
+    
+        let isValid = true;
+
+        if (!user.name) {
+            nameError.nameIsShort = "Required";
+            isValid = false;
+          }
+        if (!user.email) {
+          emailError.emailIsShort = "Required";
+          isValid = false;
+        }
+        if (!user.email.includes("@")) {
+          emailError.emailIsInvalid = "Email should contain @";
+          isValid = false;
+        }
+        if (!user.password) {
+          passwordError.passwordIsShort = "Required";
+          isValid = false;
+        }
+    
+        setNameError(nameError);
+        setEmailError(emailError);
+        setPasswordError(passwordError);
+    
+        return isValid;
+      };
+
     return (
        <section  className="login-page" >
          
            <div className="login create-note">
                <h2>Login</h2>
                <form  onSubmit={loginSubmit} >
-                   <input type="email" name="email" id="login-email" placeholder="Email" required
+                   <input type="text" name="email" id="login-email" placeholder="Email" 
                    value={user.email}  onChange={onChangeInput} />
 
-                  <input type="password" name="password" id="login-password" placeholder="Password" required
+                {Object.keys(emailError).map((key, i) => {
+                return (
+                    <div key={i} style={{ color: "red" }}>
+                    {emailError[key]}
+                    </div>
+                );
+                })}
+
+                  <input type="password" name="password" id="login-password" placeholder="Password" 
                    value={user.password} onChange={onChangeInput}  />
+
+                {Object.keys(passwordError).map((key, i) => {
+                return (
+                    <div key={i} style={{ color: "red" }}>
+                    {passwordError[key]}
+                    </div>
+                );
+                })}
 
                    <button type="submit" >Login</button>
 
@@ -97,14 +182,36 @@ const Login = ({setIslogin}) => {
            <div className="register create-note" style={style}>
            <h2>Register</h2>
                <form onSubmit={registerSubmit} >
-                   <input type="text" name="name" id="register-email" placeholder="Name" required
+                   <input type="text" name="name" id="register-email" placeholder="Name" 
                    value={user.name} onChange={onChangeInput}  />
 
-                   <input type="email" name="email" id="register-email" placeholder="Email" required
-                   value={user.email} onChange={onChangeInput}  />
+                {Object.keys(nameError).map((key, i) => {
+                return (
+                    <div key={i} style={{ color: "red" }}>
+                    {nameError[key]}
+                    </div>
+                );
+                })}
 
-                  <input type="password" name="password" id="register-password" placeholder="Password" required
+                   <input type="text" name="email" id="register-email" placeholder="Email" 
+                   value={user.email} onChange={onChangeInput}  />
+                    {Object.keys(emailError).map((key, i) => {
+                return (
+                    <div key={i} style={{ color: "red" }}>
+                    {emailError[key]}
+                    </div>
+                );
+                })}
+
+                  <input type="password" name="password" id="register-password" placeholder="Password" 
                    value={user.password} onChange={onChangeInput}  />
+                    {Object.keys(passwordError).map((key, i) => {
+                return (
+                    <div key={i} style={{ color: "red" }}>
+                    {passwordError[key]}
+                    </div>
+                );
+                })}
 
                    <button type="submit" >Register</button>
 

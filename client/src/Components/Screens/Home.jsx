@@ -5,9 +5,8 @@ import Products from '../Containers/Products'
 import Pagination from '../Containers/Pagination'
 
 
+
 const Home = ({match}) => {
-
-
 
   const [loading , setLoading] = useState(false)
   const [product, setProduct] = useState([]);
@@ -17,7 +16,6 @@ const Home = ({match}) => {
 
   const keyword = match.params.keyword
 
-
   const getProducts = async (token , keyword ='') => {
     const res = await axios.get(`/api/products?keyword=${keyword} `, {
       headers: { Authorization: token },
@@ -26,7 +24,6 @@ const Home = ({match}) => {
     setProduct(res.data); 
   };
 
- 
 useEffect(() => {
   const token = localStorage.getItem("tokenStore");
   setToken(token);
@@ -47,9 +44,9 @@ const getCurrentProducts = () => {
 
   return (
     <div>
-      <div>
-          <Products pro = {getCurrentProducts()} loading={loading} />
-      </div>
+     
+              <Products pro = {getCurrentProducts()} loading={loading} />
+      
         
 
       <div>
