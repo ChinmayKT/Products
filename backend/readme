@@ -14,10 +14,10 @@ axios
 Backend
 bcrypt
 cors
-crypto
+bcrypt
 express
 jsonwebtoken
 mongoose
-multer
+
 
 

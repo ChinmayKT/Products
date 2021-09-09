@@ -50,7 +50,8 @@ const Login = ({setIslogin}) => {
                 password : user.password
 
             })
-            // console.log(res.data)
+         
+
             setUser({ email : '' , password: ''})
             localStorage.setItem('tokenStore' , res.data.token)
             setErr(res.data.msg)
